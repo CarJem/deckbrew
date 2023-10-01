@@ -18,8 +18,14 @@ def get_blacklisted_devices():
     return lines
 
 def is_gamemode():
-    #TODO: Add Actual Gamemode Detection
-    return True
+    try:
+        DESKTOP_SESSION = os.environ.get('DESKTOP_SESSION')
+        if DESKTOP_SESSION == "gamescope-wayland":
+            return True
+        else:
+            return False
+    except:
+        return False
 
 def get_active_devices():
     try:
