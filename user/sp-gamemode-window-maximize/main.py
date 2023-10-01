@@ -9,6 +9,9 @@ import sys
 import gamescope_mode_change
 from psutil import Process
 
+host_display=":0"
+server_display=":1"
+server_display_int=1
 
 class ProcessOptions:
 
@@ -56,9 +59,7 @@ def getProcessOptions(window_pid):
 
 def loop(debug=False, ignoreGS=False):
 
-    host_display=":0"
-    server_display=":1"
-    server_display_int=1
+
 
     if isGamescope(ignoreGS):
         deck_display_host = x11_api.X11(host_display)
@@ -126,18 +127,24 @@ def loop(debug=False, ignoreGS=False):
                 if debug:
                     print('No need to resize')
 
-def main():
+def main(noloop, ignoreGS, debug):
+
+
+    if noloop:
+        loop(debug, ignoreGS)
+    else:
+        while True:
+            loop(debug, ignoreGS)
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser("gamescope_auto_maximize")
     parser.add_argument("-noloop", dest='noloop', action='store_true')
     parser.add_argument("-debug", dest='debug', action='store_true', default=False)
     parser.add_argument("-ignore_gamescope", dest='ignoreGS', action='store_true', default=False)
     args = parser.parse_args()
 
-    if args.noloop:
-        loop(args.debug, args.ignoreGS)
-    else:
-        while True:
-            loop(args.debug, args.ignoreGS)
+    ignoreGS = args.ignoreGS
+    debug = args.debug
+    noloop = args.noloop
 
-if __name__ == "__main__":
-    main()
+    main(noloop, ignoreGS, debug)
