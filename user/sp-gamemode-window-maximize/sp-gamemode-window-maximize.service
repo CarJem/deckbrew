@@ -1,0 +1,13 @@
+[Unit]
+Description=Maximize currently focused gamescope app
+StartLimitBurst=1000
+
+[Service]
+Restart=always
+RestartSec=2s
+Environment=DISPLAY=:1
+ExecStart=/usr/bin/python3 /home/deck/deckbrew/user/sp-gamemode-window-maximize/main.py
+#ExecStart=/usr/bin/bash -c "/home/deck/deckbrew/user/sp-gamemode-window-maximize/main.sh"
+
+[Install]
+WantedBy=default.target

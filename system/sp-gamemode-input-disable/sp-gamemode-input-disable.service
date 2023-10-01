@@ -1,0 +1,12 @@
+[Unit]
+Description=Disables selected input devices to allow Steam Input to take precedence
+StartLimitBurst=1000
+
+[Service]
+Restart=always
+RestartSec=2s
+Environment=DISPLAY=:1
+ExecStart=/usr/bin/python3 /home/deck/deckbrew/system/sp-gamemode-input-disable/main.py
+
+[Install]
+WantedBy=default.target
