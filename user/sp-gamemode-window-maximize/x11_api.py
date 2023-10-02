@@ -3,6 +3,7 @@ import evdev
 import subprocess
 import threading
 from xdo import Xdo
+import ewmh
 
 import Xlib
 import Xlib.display
@@ -17,11 +18,10 @@ class X11:
         self.root: Window = self.disp.screen().root
         self.last_seen = { 'xid': None } 
         self.xdotool = Xdo(displayEnv)
+        self.ewmh = ewmh.EWMH(self.disp, self.root)
 
         self.NET_WM_NAME = self.disp.intern_atom('_NET_WM_NAME')
         self.NET_WM_WINDOW_TYPE = self.disp.intern_atom('_NET_WM_WINDOW_TYPE')
-        self.WM_NORMAL_HINTS = self.disp.intern_atom('WM_NORMAL_HINTS')
-        self.NET_WM_CLASS = self.disp.intern_atom('NET_WM_CLASS')
 
     def __atom_to_string(self, array):
         new_array = []
@@ -61,7 +61,7 @@ class X11:
             return [ 0, 0 ]
         
     def getWindow(self, window_id):
-        return self.disp.create_resource_object('window', window_id)
+        return self.ewmh._createWindow(window_id)
 
     def getWindowPID(self, window_id):
         try:
@@ -70,7 +70,16 @@ class X11:
             window_pid = None
 
         return window_pid
-    
+
+    def getWmState(self, window_id):
+        try:
+            windowObject = self.getWindow(window_id)
+            window_state = self.ewmh.getWmState(windowObject, True)
+        except Exception:
+            window_state = None
+
+        return window_state      
+
     def getWindowSizeData(self, window_id):
         max_width = 0
         min_width = 0
@@ -105,11 +114,10 @@ class X11:
             "min_height": min_height
         }
 
-    def getWindowType(self, window_id):
+    def getWmType(self, window_id):
         try:
             window_obj = self.getWindow(window_id)
-            tmop = window_obj.get_full_property(self.NET_WM_WINDOW_TYPE, 0).value
-            window_type = self.__atom_to_string(tmop)
+            window_type = self.ewmh.getWmWindowType(window_obj, True)
         except Xlib.error.XError:
             window_type = None
 

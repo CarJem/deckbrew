@@ -12,6 +12,7 @@ from psutil import Process
 host_display=":0"
 server_display=":1"
 server_display_int=1
+last_calibrated_window=-1
 
 class ProcessOptions:
 
@@ -58,7 +59,7 @@ def getProcessOptions(window_pid):
 
 
 def loop(debug=False, ignoreGS=False):
-
+    global last_calibrated_window
 
 
     if isGamescope(ignoreGS):
@@ -67,10 +68,18 @@ def loop(debug=False, ignoreGS=False):
 
 
         window_id = current_display.getActiveWindow()
+
+        if last_calibrated_window == window_id:
+            return
+        else:
+            last_calibrated_window = window_id
+
         window_name = current_display.getWindowName(window_id)
         window_pid = current_display.getWindowPID(window_id)
         window_options = getProcessOptions(window_pid)
         window_data = current_display.getWindowSizeData(window_id)
+        wm_state = current_display.getWmState(window_id)
+        wm_type = current_display.getWmType(window_id)
 
         allowed_to_maximize = not window_options.disableTweak
 
@@ -85,6 +94,8 @@ def loop(debug=False, ignoreGS=False):
             print('Window ID:', window_id)
             print('Window Name:', str(window_name))
             print('Window PID:', window_pid)
+            print('WM Type:', wm_type)
+            print('WM State:', wm_state)
             print('Options:', vars(window_options))
 
 
