@@ -65,7 +65,7 @@ class GamescopeTweaks:
 
         if not size_mismatch:
             if instance.debug: print('No need to resize')
-            #return
+            return
             
         instance.display.setWindowSize(instance.window_id, desired_width, desired_height)
         
