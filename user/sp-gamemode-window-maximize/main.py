@@ -60,10 +60,15 @@ if __name__ == "__main__":
     parser.add_argument("-noloop", dest='noloop', action='store_true')
     parser.add_argument("-debug", dest='debug', action='store_true', default=False)
     parser.add_argument("-ignore_gamescope", dest='ignoreGS', action='store_true', default=False)
+    parser.add_argument("-options", dest='showEnvVariables', action='store_true', default=False)
     args = parser.parse_args()
 
     ignoreGS = args.ignoreGS
     debug = args.debug
     noloop = args.noloop
+    showEnvVariables = args.showEnvVariables
 
-    main(noloop, ignoreGS, debug)
+    if showEnvVariables:
+        ProcessOptions({}).showOptions()
+    else:
+        main(noloop, ignoreGS, debug)
