@@ -19,6 +19,19 @@ from Xlib.protocol import event
 from Xlib.xobject import drawable
 
 class GamescopeResolution:
+
+    def getMode(_serverID="0", _display=":1"):
+        serverID = int(_serverID)
+        d = display.Display(_display)
+
+        atom = d.intern_atom(atomName, only_if_exists=1)
+        if atom == X.NONE:
+            sys.stderr.write('xwayland:  no atom named "%s" on server "%s"\n'%(atomName, d.get_display_name()))
+            return
+
+        win: drawable.Window = d.screen().root
+        print(win.get_property(atom, Xatom.CARDINAL, 32, 32))
+
     def main(_width="1280", _height="800", _serverID="0", _force=False, _display=":1", debug=False):
         width = int(_width)
         height = int(_height)
@@ -37,7 +50,8 @@ class GamescopeResolution:
         atom = d.intern_atom(atomName, only_if_exists=1)
         if atom == X.NONE:
             sys.stderr.write('xwayland:  no atom named "%s" on server "%s"\n'%(atomName, d.get_display_name()))
-            sys.exit(1)
+            return
+            #sys.exit(1)
 
         if debug:
             print(d.screen().root.id)
@@ -45,6 +59,7 @@ class GamescopeResolution:
         sendModeChanged = GamescopeResolution.apply(GamescopeResolution.x11, d, GamescopeResolution._sendModeChanged, atom)
         changeMode = GamescopeResolution.apply(GamescopeResolution.x11, d, GamescopeResolution._changeMode, atom)
 
+        sendModeChanged(d.screen().root)
         changeMode(d.screen().root, width, height, serverID, superRes, debug)
         sendModeChanged(d.screen().root)
 

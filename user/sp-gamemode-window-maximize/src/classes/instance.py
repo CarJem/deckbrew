@@ -8,8 +8,6 @@ class GamescopeInstance:
     def __init__(self, server: XlibInstance, display: XlibInstance, window_id, window_pid, window_appid, is_external_display: bool, debug=False) -> None:
         self.debug = debug
 
-        self.server_display_int = 1
-
         self.server = server
         self.display = display
 

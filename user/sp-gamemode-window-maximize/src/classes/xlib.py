@@ -17,12 +17,13 @@ from Xlib.xobject.drawable import Window
 from Xlib.protocol.request import GetGeometry, QueryTree
 
 class XlibInstance:
-    def __init__(self, displayEnv):
-        self.displayEnv = displayEnv
-        self.disp = Xlib.display.Display(displayEnv)
+    def __init__(self, displayNum: int):
+        self.displayId = displayNum
+        self.displayEnv = ":{0}".format(self.displayId)
+        self.disp = Xlib.display.Display(self.displayEnv)
         self.root: Window = self.disp.screen().root
         self.last_seen = { 'xid': None } 
-        self.xdotool = Xdo(displayEnv)
+        self.xdotool = Xdo(self.displayEnv)
         self.ewmh = ewmh.EWMH(self.disp, self.root)
 
         self.NET_WM_NAME = self.disp.intern_atom('_NET_WM_NAME')

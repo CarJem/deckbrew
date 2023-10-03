@@ -20,8 +20,29 @@ from ..classes.instance import *
 from ..gamescope.resolution import *
 from ..classes.xlib import *
 
-class GamescopeTweaks:
+steam_pid = None
 
+class GamescopeTweaks:
+    def isGameModeRunning(forceRun: bool = False):
+        global steam_pid
+
+        if forceRun:
+            return True
+
+        if not steam_pid or not psutil.pid_exists(steam_pid):
+            process_name = "steam"
+            for proc in psutil.process_iter():
+                if process_name in proc.name():
+                    steam_pid = proc.pid
+                    break
+
+        if psutil.pid_exists(steam_pid):
+            steam_proc = Process(steam_pid)
+            DESKTOP_SESSION = steam_proc.environ().get('DESKTOP_SESSION')
+            return DESKTOP_SESSION == "gamescope-wayland"
+        else:
+            return False
+        
     def runPatches(instance: GamescopeInstance):
         if instance.window_options.isDisabled:
             return
@@ -63,6 +84,8 @@ class GamescopeTweaks:
 
         size_mismatch = (not instance.window_height == desired_height or not instance.window_width == desired_width)
 
+        GamescopeResolution.getMode(str(instance.display.displayId), instance.server.displayEnv)
+
         if not size_mismatch:
             if instance.debug: print('No need to resize')
             return
@@ -81,5 +104,5 @@ class GamescopeTweaks:
                 pass
 
         if instance.window_options.dynamicResize_AdjustRes:
-            GamescopeResolution.main(desired_width, desired_height, "1", instance.window_options.dynamicResize_ForceRes, ":0", instance.debug)
+            GamescopeResolution.main(desired_width, desired_height, str(instance.display.displayId), instance.window_options.dynamicResize_ForceRes, instance.server.displayEnv, instance.debug)
         
