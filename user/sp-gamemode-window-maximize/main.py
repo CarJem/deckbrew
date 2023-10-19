@@ -23,20 +23,25 @@ def loop(debug: bool, forceRun: bool):
         global_process_options = ProcessOptions_Global()
 
     if GamescopeTweaks.isGameModeRunning(forceRun):
-        server = XlibInstance(global_process_options.serverId)
-        display = XlibInstance(global_process_options.displayId)
+        server = XlibInstance(global_process_options.SPGM_WINTWEAKS_SERVER_ID)
+        display = XlibInstance(global_process_options.SPGM_WINTWEAKS_DISPLAY_ID)
 
         window_id, window_pid, window_appid = server.getActiveWindow()
         is_external_display = server.getExternalDisplayState()
+        has_decky_filechanged = DeckyEnviornment.hasFileUpdated()
 
-        if window_id == -1: 
+        if has_decky_filechanged and window_id != -1:
+            pass
+        elif window_id == -1: 
             return
         elif last_calibrated_window == window_id and last_external_display_state == is_external_display and last_window_appid == window_appid: 
             return
-        else:
-            last_calibrated_window = window_id
-            last_external_display_state = is_external_display
-            last_window_appid = window_appid
+        
+        time.sleep(1)
+
+        last_calibrated_window = window_id
+        last_external_display_state = is_external_display
+        last_window_appid = window_appid
             
 
         instance = GamescopeInstance(server, display, window_id, window_pid, window_appid, global_process_options, is_external_display, debug)
@@ -51,6 +56,7 @@ def showHelp():
 
 def main(debug: bool, forceRun: bool, noLoop: bool):
     canLoop = True
+    DeckyEnviornment.hasFileUpdated()
     while canLoop:
         loop(debug, forceRun)
         if noLoop: canLoop = False

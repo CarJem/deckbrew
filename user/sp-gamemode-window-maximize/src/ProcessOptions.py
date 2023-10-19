@@ -1,17 +1,59 @@
 import os
 import argparse
+import json
 from psutil import Process
 from .options.OptionsColors import OptionColors
 from .options.OptionsViewer import *
 
+class DeckyEnviornment:
+
+    filepath = '/home/deck/homebrew/settings/SPGMTweaks/settings.json'
+    _cached_stamp = 0
+
+    def getDeckyEnviornment(appId: any):
+        appIdStr = str(appId)
+        envVars = {}
+        try:
+            if os.path.exists(DeckyEnviornment.filepath):
+                f = open(DeckyEnviornment.filepath)
+                jsonFile = dict(json.load(f))
+                for key in jsonFile:
+                    if str(key).startswith(appIdStr + "."):
+                        variable_name = str(key).removeprefix(appIdStr + ".")
+                        envVars[variable_name] = jsonFile[key]
+        except Exception as e:
+            print(e)
+            #raise e
+            #print('unreadable')
+            pass
+
+        return envVars
+
+    def hasFileUpdated():
+        hasUpdated = False
+
+        try:
+            if os.path.exists(DeckyEnviornment.filepath):
+                stamp = os.stat(DeckyEnviornment.filepath).st_mtime
+                if stamp != DeckyEnviornment._cached_stamp:
+                   DeckyEnviornment._cached_stamp = stamp
+                   hasUpdated = True
+        except Exception as e:
+            pass
+
+        return hasUpdated
 
 class ProcessOptions:
+
+    jsonFile = None
+    
     def showOptions(self):
         self.vw.show()
 
     def toString(self) -> str:
         var_list = vars(self)
         var_list.pop('vw')
+        var_list.pop('key')
         output = ""
 
         maxLength = 0
@@ -27,48 +69,67 @@ class ProcessOptions:
             if len(var_list) - 1 > index: output += "\n"
         
         return output
+
+    def preload():
+        if ProcessOptions.jsonFile:
+            return ProcessOptions.jsonFile
+        try:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            filepath = os.path.join(current_dir, '_variables.json')
+            file = open(filepath)
+            ProcessOptions.jsonFile = dict(json.load(file))
+        except Exception as e:
+            ProcessOptions.jsonFile = dict()
+
+        return ProcessOptions.jsonFile
+
+    def load(self):
+        jsonFile = ProcessOptions_App.preload()
+        try:
+            if self.key in jsonFile:
+                for entry in jsonFile[self.key]:
+                    if 'type' in entry:
+                        
+                        if entry['type'] == "section": 
+                            self.vw.section(entry['title'])
+
+                        elif entry['type'] == "sectioninfo": 
+                            self.vw.sectionInfo(entry['title'])
+
+                        elif entry['type'] == "value": 
+                            notes = None
+                            desc = None
+                            if 'desc' in entry:
+                                desc = entry['desc']
+                            if 'cmd_enumHints' in entry:
+                                notes = OptionColors.ENUMS("Enums: ", entry['cmd_enumHints'])
+                            value = self.vw.add(entry['id'], entry['xtype'], desc, entry['default'], notes)  
+                            setattr(self, entry['id'], value)
+
+                        elif entry['type'] == "subsection": 
+                            self.vw.subSection(entry['title'])
+        except Exception as e:
+            raise e
     
     def __init__(self, readMode: OptionsReadMode = OptionsReadMode.NORMAL):
         self.vw = OptionViewer(readMode)
+        self.key = "none"
 
 class ProcessOptions_Global(ProcessOptions):
     def __init__(self, readMode: OptionsReadMode = OptionsReadMode.NORMAL):
         super().__init__(readMode)
         os_env = Process(os.getpid()).environ()
+        self.key = "global"
         self.vw.setEnv(os_env)
-
-        self.vw.section("Global Options")
-        self.vw.sectionInfo("These options need to be applied before starting the service")
-        
-        self.useWhitelist =                     self.vw.add("SPGM_WINTWEAKS_ENABLE_WHITELIST", "bool", "Enable the tweak only for applications that specify the '{0}' enviornment variable".format(OptionColors.VARIABLE_NAME_REF("SPGM_WINTWEAKS_IS_WHITELISTED")), False)
-        self.serverId =                         self.vw.add("SPGM_WINTWEAKS_SERVER_ID", "int", "The X Server containing the Embeded Gamescope Session", 0)
-        self.displayId =                        self.vw.add("SPGM_WINTWEAKS_DISPLAY_ID", "int", "The XWayland Server of the Embeded Gamescope", 1)
-
+        self.load()
         self.vw.parent()
 
 class ProcessOptions_App(ProcessOptions):
     def __init__(self, envVars: dict[str, str] = {}, readMode: OptionsReadMode = OptionsReadMode.NORMAL):
         super().__init__(readMode)
+        self.key = "user"
         self.vw.setEnv(envVars)
-
-        self.vw.section("Per Application Options")
-        self.vw.sectionInfo("These options are applied to the applications themselves, usually through Steam launch arguments")
-
-        self.isDisabled =                        self.vw.add("SPGM_WINTWEAKS_DISABLED", "bool", "Disable the tweak for any application containing this environment variable value", False)  
-        self.isWhitelisted =                     self.vw.add("SPGM_WINTWEAKS_IS_WHITELISTED", "bool", "Enables the tweak when the '{0}' enviornment variable is used. See '{0}' for more info".format(OptionColors.VARIABLE_NAME_REF("SPGM_WINTWEAKS_ENABLE_WHITELIST")), False)
-
-        self.vw.subSection("Dynamic Resize Options")
-        self.dynamicResize_Enabled =             self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED", "bool", "Enable dynamic resize settings", True)
-        self.dynamicResize_ResizeWindow =        self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_ADJUST_RES", "bool", "Enable automatic window resizing to fit available space", True)
-        self.dynamicResize_MaximumToScreenSize = self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_MAX_TO_SCREEN_SIZE", "bool", "Forcefully Sets the Window's Maximum Size to the Screen Size (fix for LEGO Star Wars: TSS, etc.)", False)
-        self.dynamicResize_IgnoreSizeLimits =    self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_IGNORE_SIZE_LIMITS", "bool", "Ignore Maximum and Minimums when resizing windows", False)
-        self.dynamicResize_GS_AdjustRes =        self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_GS_ADJUST_RES", "bool", "Adjust gamescope resolution alongside of the actual window size", True)        
-        self.dynamicResize_GS_SuperRes =         self.vw.add("SPGM_WINTWEAKS_DYNAMICRESIZE_GS_SUPERRES", "bool", "Use gamescope super resolution", False)
-
-        self.vw.subSection("Gamescope Options")
-        self.dynamicResize_GS_Filter =           self.vw.add("SPGM_WINTWEAKS_GAMESCOPE_FILTER", "int", "Use a specific gamescope upscaling filter", -1, OptionColors.ENUMS("Enums: ", "OFF(-1), LINEAR(0), NEAREST(1), FSR(2), NIS(3)"))
-        self.dynamicResize_GS_Scaler =           self.vw.add("SPGM_WINTWEAKS_GAMESCOPE_SCALER", "int", "Use a specific gamescope upscaling scaler", -1, OptionColors.ENUMS("Enums: ", "OFF(-1), AUTO(0), INTEGER(1), FIT(2), FILL(3), STRETCH(4)"))
-
+        self.load()
         self.vw.parent()
         
 

@@ -1,0 +1,215 @@
+{
+    "global": [
+        {
+            "type": "section",
+            "title": "Global Options"
+        },
+        {
+            "type": "sectioninfo",
+            "title": "These options need to be applied before starting the service"
+        },
+        {
+            "id": "SPGM_WINTWEAKS_DECKY_MODE",
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Enable Decky Support, instead of using enviornment variables",
+            "default": true
+        },
+        {
+            "id": "SPGM_WINTWEAKS_SERVER_ID",
+            "xtype": "int",
+            "type": "value",
+            "desc": "The X Server containing the Embeded Gamescope Session",
+            "default": 0
+        },
+        {
+            "id": "SPGM_WINTWEAKS_DISPLAY_ID",
+            "xtype": "int",
+            "type": "value",
+            "desc": "The XWayland Server of the Embeded Gamescope",
+            "default": 1
+        }
+    ],
+    "user": [
+        {
+            "type": "section",
+            "decky_hidden": true,
+            "title": "Per Application Options"
+        },
+        {
+            "type": "sectioninfo",
+            "decky_hidden": true,
+            "title": "These options are applied to the applications themselves, usually through Steam launch arguments"
+        },
+        {
+            "type": "subsection",
+            "title": "Dynamic Resize Options"
+        },
+        {
+            "title": "Enable",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_showIfDisabled": true,
+            "decky_requires": "SPGM_WINTWEAKS_FIXED_WINDOW_SIZE_ENABLED",
+            "decky_requiresValue": false,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Enable dynamic resize settings",
+            "default": false
+        },
+        {
+            "title": "Adjust Window Size",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_ADJUST_RES",
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Enable automatic window resizing to fit available space",
+            "default": false
+        },
+        {
+            "title": "Max to Screen Size",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_MAX_TO_SCREEN_SIZE",
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Forcefully Sets the Window's Maximum Size to the Screen Size (fix for LEGO Star Wars: TSS, etc.)",
+            "default": false
+        },
+        {
+            "title": "Ignore Size Limits",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_IGNORE_SIZE_LIMITS",
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Ignore Maximum and Minimums when resizing windows",
+            "default": false
+        },
+        {
+            "title": "Adjust Gamescope Size",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_GS_ADJUST_RES",
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Adjust gamescope resolution alongside of the actual window size",
+            "default": false
+        },
+        {
+            "title": "GS Super Resolution",
+            "id": "SPGM_WINTWEAKS_DYNAMICRESIZE_GS_SUPERRES",
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Use gamescope super resolution",
+            "default": false
+        },
+        {
+            "type": "subsection",
+            "title": "Fixed Resize Options"
+        },
+        {
+            "title": "Enable",
+            "id": "SPGM_WINTWEAKS_FIXED_WINDOW_SIZE_ENABLED",
+            "decky_showIfDisabled": true,
+            "decky_requires": "SPGM_WINTWEAKS_DYNAMICRESIZE_ENABLED",
+            "decky_requiresValue": false,
+            "xtype": "bool",
+            "type": "value",
+            "desc": "Enable Fixed Window sizes",
+            "default": false
+        },
+        {
+            "title": "Window Width",
+            "id": "SPGM_WINTWEAKS_FIXED_WINDOW_WIDTH",
+            "decky_requires": "SPGM_WINTWEAKS_FIXED_WINDOW_SIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "int",
+            "type": "value",
+            "desc": "Set a Fixed Window Width",
+            "decky_isSlider": true,
+            "decky_descHidden": true,
+            "decky_sliderShowValue": true,
+            "decky_sliderEditableValue": true,
+            "minInt": 100,
+            "maxInt": 9999,
+            "default": 1280
+        },
+        {
+            "title": "Window Height",
+            "id": "SPGM_WINTWEAKS_FIXED_WINDOW_HEIGHT",
+            "decky_requires": "SPGM_WINTWEAKS_FIXED_WINDOW_SIZE_ENABLED",
+            "decky_requiresValue": true,
+            "xtype": "int",
+            "type": "value",
+            "desc": "Set a Fixed Window Height",
+            "decky_isSlider": true,
+            "decky_descHidden": true,
+            "decky_sliderShowValue": true,
+            "decky_sliderEditableValue": true,
+            "minInt": 100,
+            "maxInt": 9999,
+            "default": 800
+        },
+        {
+            "type": "subsection",
+            "title": "Gamescope Options"
+        },
+        {
+            "title": "Gamescope Filter",
+            "id": "SPGM_WINTWEAKS_GAMESCOPE_FILTER_ENABLED",
+            "desc": "Use a specific gamescope upscaling filter. Define with 'SPGM_WINTWEAKS_GAMESCOPE_FILTER_VALUE'",
+            "xtype": "bool",
+            "type": "value",
+            "default": false,
+            "decky_descHidden": true
+        },
+        {
+            "title": "N/A",
+            "id": "SPGM_WINTWEAKS_GAMESCOPE_FILTER_VALUE",
+            "xtype": "int",
+            "type": "value",
+            "desc": "Use a specific gamescope upscaling filter. Requires 'SPGM_WINTWEAKS_GAMESCOPE_FILTER_ENABLED'",
+            "minInt": 0,
+            "maxInt": 3,
+            "default": 0,
+            "cmd_enumHints": "LINEAR(0), NEAREST(1), FSR(2), NIS(3)",
+            "decky_isSlider": true,
+            "decky_sliderLabels": [ "LINEAR", "NEAREST", "FSR", "NIS" ],
+            "decky_requires": "SPGM_WINTWEAKS_GAMESCOPE_FILTER_ENABLED",
+            "decky_requiresValue": true,
+            "decky_desc": "Use a specific gamescope upscaling filter",
+            "decky_showIfDisabled": true,
+            "decky_titleHidden": true
+        },
+        {
+            "title": "Gamescope Scaler",
+            "id": "SPGM_WINTWEAKS_GAMESCOPE_SCALER_ENABLED",
+            "desc": "Use a specific gamescope upscaling scaler. Define with 'SPGM_WINTWEAKS_GAMESCOPE_SCALER_VALUE'",
+            "decky_descHidden": true,
+            "xtype": "bool",
+            "type": "value",
+            "default": false
+        },
+        {
+            "title": "N/A",
+            "id": "SPGM_WINTWEAKS_GAMESCOPE_SCALER_VALUE",
+            "xtype": "int",
+            "type": "value",
+            "desc": "Use a specific gamescope upscaling scaler. Requires 'SPGM_WINTWEAKS_GAMESCOPE_SCALER_ENABLED'",
+            "minInt": 0,
+            "maxInt": 4,
+            "default": 0,
+            "cmd_enumHints": "AUTO(0), INTEGER(1), FIT(2), FILL(3), STRETCH(4)",
+            "decky_desc": "Use a specific gamescope upscaling scaler",
+            "decky_sliderLabels": [ "AUTO", "INT", "FIT", "FILL", "STRET" ],
+            "decky_requires": "SPGM_WINTWEAKS_GAMESCOPE_SCALER_ENABLED",
+            "decky_requiresValue": true,
+            "decky_showIfDisabled": true,
+            "decky_titleHidden": true,
+            "decky_isSlider": true
+        }
+    ]
+}

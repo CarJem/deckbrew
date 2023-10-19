@@ -22,11 +22,17 @@ class GamescopeInstance:
         self.window_width, self.window_height, self.window_max_width, self.window_min_width, self.window_max_height, self.window_min_height = window_sizes
 
         try:
-            window_process = Process(pid=self.window_pid)
-            envVars = window_process.environ()
-            options = ProcessOptions_App(envVars)
-            self.window_options = options
-        except:
+            if self.global_options.SPGM_WINTWEAKS_DECKY_MODE:
+                envVars = DeckyEnviornment.getDeckyEnviornment(window_appid)
+                options = ProcessOptions_App(envVars)
+                self.window_options = options
+            else:
+                window_process = Process(pid=self.window_pid)
+                envVars = window_process.environ()
+                options = ProcessOptions_App(envVars)
+                self.window_options = options
+        except Exception as e:
+            print("Hey:", e)
             self.window_options = ProcessOptions_App({})
 
         if self.debug:

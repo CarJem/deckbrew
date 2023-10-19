@@ -77,7 +77,7 @@ class XlibInstance:
                     isNext = True
 
             window_id = focused_window
-            app_id = focused_app
+            app_id = focused_app_gfx
         except:
             process_id = -1
             window_id = -1

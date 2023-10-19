@@ -33,9 +33,11 @@ class OptionData:
     def getBoolean(envVars: dict[str, str], key: str, default: bool = False):
         result = default
         value = envVars.get(key)
-        if value:
-            if value == "1" or value == "true":
+        if str(value):
+            if value == "1" or value == "true" or value == True:
                 result = True
+            elif value == "0" or value == "false" or value == False:
+                result = False
 
         return result
 

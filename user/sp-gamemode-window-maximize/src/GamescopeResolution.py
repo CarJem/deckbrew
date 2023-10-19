@@ -14,6 +14,11 @@ GAMESCOPE_NEW_SCALING_FILTER = "GAMESCOPE_NEW_SCALING_FILTER"
 GAMESCOPE_NEW_SCALING_SCALER = "GAMESCOPE_NEW_SCALING_SCALER"
 GAMESCOPE_SCALING_FILTER = "GAMESCOPE_SCALING_FILTER"
 GAMESCOPE_XWAYLAND_MODE_CONTROL = "GAMESCOPE_XWAYLAND_MODE_CONTROL"
+GAMESCOPE_FSR_FEEDBACK = "GAMESCOPE_FSR_FEEDBACK"
+GAMESCOPE_FORCE_WINDOWS_FULLSCREEN = "GAMESCOPE_FORCE_WINDOWS_FULLSCREEN"
+WM_CHANGE_STATE = "WM_CHANGE_STATE"
+GAMESCOPE_DISPLAY_MODE_NUDGE = "GAMESCOPE_DISPLAY_MODE_NUDGE"
+GAMESCOPE_DISPLAY_FORCE_INTERNAL = "GAMESCOPE_DISPLAY_FORCE_INTERNAL"
 
 import Xlib
 import Xlib.display
@@ -73,12 +78,17 @@ class GamescopeResolution:
 
     def changeFilter(_display="1", _server=":0", mode=0):
         disp = display.Display(":" + _display)
-        GamescopeResolution.__delProp(disp, disp.screen().root, GAMESCOPE_SCALING_FILTER)
-        GamescopeResolution.__sendProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_FILTER, [mode])
+        if mode == -1:
+            GamescopeResolution.__delProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_FILTER)
+        else:
+            GamescopeResolution.__sendProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_FILTER, [mode])
 
     def changeScaler(_display="1", _server=":0", mode=0):
         disp = display.Display(":" + _display)
-        GamescopeResolution.__sendProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_SCALER, [mode])
+        if mode == -1:
+            GamescopeResolution.__delProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_SCALER)
+        else:
+            GamescopeResolution.__sendProp(disp, disp.screen().root, GAMESCOPE_NEW_SCALING_SCALER, [mode])
 
     def changeSize(_width="1280", _height="800", _display="1", _superRes=False, _server=":0"):
         width = int(_width)
