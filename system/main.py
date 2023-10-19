@@ -1,4 +1,5 @@
-import os
+import os,sys
+
 import evdev
 import subprocess
 import threading

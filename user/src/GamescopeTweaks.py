@@ -4,7 +4,7 @@ import evdev
 import subprocess
 import threading
 import psutil
-from xdo import Xdo
+#from xdo import Xdo
 import ewmh
 
 import Xlib

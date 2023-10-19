@@ -1,4 +1,6 @@
-import os
+import os,sys
+sys.path.append(os.path.join(os.path.dirname(__file__), 'py_modules'))
+
 import argparse
 import time
 from psutil import Process
@@ -7,6 +9,7 @@ from src.GamescopeTweaks import *
 from src.ProcessOptions import *
 from src.XlibInstance import *
 from src.GamescopeInstance import *
+
 
 last_calibrated_window=-1
 last_external_display_state=False

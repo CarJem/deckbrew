@@ -4,7 +4,7 @@ import evdev
 import subprocess
 import threading
 import psutil
-from xdo import Xdo
+#from xdo import Xdo
 import ewmh
 
 import Xlib
@@ -22,8 +22,7 @@ class XlibInstance:
         self.displayEnv = ":{0}".format(self.displayId)
         self.disp = Xlib.display.Display(self.displayEnv)
         self.root: Window = self.disp.screen().root
-        self.last_seen = { 'xid': None } 
-        self.xdotool = Xdo(self.displayEnv)
+        self.last_seen = { 'xid': None }
         self.ewmh = ewmh.EWMH(self.disp, self.root)
 
         self.NET_WM_NAME = self.disp.intern_atom('_NET_WM_NAME')

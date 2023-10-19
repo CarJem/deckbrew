@@ -1,0 +1,7 @@
+ansiwrap==0.8.4
+colorama==0.4.6
+ewmh==0.1.6
+python-xlib==0.33
+six==1.16.0
+textwrap3==0.9.2
+xlib==0.21

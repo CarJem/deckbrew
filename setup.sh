@@ -88,6 +88,12 @@ if [ "$1" == "restart-services" ]; then
 
     restart_services "$SYSTEM_SERVICES" "system"
     restart_services "$USER_SERVICES" "user"
+elif [ "$1" == "remove-services" ]; then
+    SYSTEM_SERVICES=$(systemctl list-units --type service --plain --quiet | awk '{ if (($1 ~ /^sp-gamemode-/) == 1) { print $1 }}')
+    USER_SERVICES=$(systemctl --user list-units --type service --plain --quiet | awk '{ if (($1 ~ /^sp-gamemode-/) == 1) { print $1 }}')
+
+    remove_services "$SYSTEM_SERVICES" "system"
+    remove_services "$USER_SERVICES" "user"
 elif [ -n "$1" ]; then
     echo "Invalid Option: $1"
 else
