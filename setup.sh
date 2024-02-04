@@ -106,14 +106,16 @@ install() {
 uninstall() {
     eval $(get_current_services)
 
-    remove_services "$SYSTEM_SERVICES" "system"
+    #remove_services "$SYSTEM_SERVICES" "system"
     remove_services "$USER_SERVICES" "user"
+
+    systemd_reload
 }
 
 restart() {
     eval $(get_current_services)
 
-    restart_services "$SYSTEM_SERVICES" "system"
+    #restart_services "$SYSTEM_SERVICES" "system"
     restart_services "$USER_SERVICES" "user"
 }
 
